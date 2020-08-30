@@ -7,10 +7,155 @@ const fs = require("fs");
 const util = require("util");
 
 const OUTPUT_DIR = path.resolve(__dirname, "output");
-const outputPath = path.join(OUTPUT_DIR, "team.html");
+const outputPath = path.join(OUTPUT_DIR, "main.html");
 
 const render = require("./lib/htmlRenderer");
-const writeFileAsync = util.promisify(fs.writeFile);
+
+const team = [];
+
+//new manager
+function managerPrompt(){
+    inquirer
+        .prompt([
+            {
+            type: "input",
+            name: "managerName",
+            message: "Enter managers name here: "    
+            },
+            
+            {
+            type: "input",
+            name: "id",
+            message: "Enter manager's ID number here: "
+            },
+
+            {
+            type: "input",
+            name: "email",
+            message: "Enter manager's email here: ",
+            validate: (answer) => {
+                const emailVal = answer.match(/\S+@\S+\.\S+/);
+                if (emailVal){
+                    return true;
+                }
+                return "Please get your sh*t togther";
+            }
+            },
+
+            {
+                type: "input",
+                name: "offNumber",
+                message: "Enter manager's office number here: "
+            },
+
+
+        ])
+        .then(function (answers) {
+            const manager = new Manager(
+                answers.managerName,
+                answers.id,
+                answers.email,
+                answers.offNumber,
+            );
+            team.push(manager);
+            promptUser();
+        })
+};
+
+//new engineer
+function engineerPrompt(){
+    inquirer
+        .prompt([
+            {
+                type: "input",
+                name: "name",
+                message: "Enter engineers name here: ",
+            },
+
+            {
+                type: "input" ,
+                name: "id",
+                message: "Enter engineer's ID number here: ",
+            },
+
+            {
+                type: "input",
+                name: "email",
+                message: "Enter engineer's email here:",
+                validate: (answer) => {
+                    const emailVal = answer.match(/\S+@\S+\.\S+/);
+                    if (emailVal){
+                        return true;
+                    }
+                    return "Please get your sh*t togther";
+                }
+            },
+
+            {
+                type: "input",
+                name: "github",
+                message: "Enter engineer's gitHub username here: ",
+            },
+        ])
+        .then(function (answers) {
+            const engineer = new Engineer(
+                answers.name,
+                answers.id,
+                answers.email,
+                answers.github,
+            );
+            team.push(engineer);
+            promptUser();
+        })
+};
+
+
+//new intern
+function internPrompt(){
+    inquirer
+        .prompt([
+            {
+                type: "input",
+                name: "name",
+                message: "Enter intern's name here: ",
+            },
+
+            {
+                type: "input" ,
+                name: "id",
+                message: "Enter intern's ID number here: ",
+            },
+
+            {
+                type: "input",
+                name: "email",
+                message: "Enter interns's email here:",
+                validate: (answer) => {
+                    const emailVal = answer.match(/\S+@\S+\.\S+/);
+                    if (emailVal){
+                        return true;
+                    }
+                    return "Please get your sh*t togther";
+                }
+            },
+
+            {
+                type: "input",
+                name: "school",
+                message: "Enter intern's current school here: ",
+            },
+        ])
+        .then(function (answers) {
+            const engineer = new Engineer(
+                answers.name,
+                answers.id,
+                answers.email,
+                answers.school,
+            );
+            team.push(intern);
+            promptUser();
+        })
+};
 
 function promptUser(){
     return inquirer.prompt([
@@ -18,32 +163,35 @@ function promptUser(){
             type: "list",
             name:"role",
             message:"Please select employee's position: ",
-            choices: ["Manager", "Engineer", "Intern"],
+            choices: ["Manager", "Engineer", "Intern", "Done"],
         },
-        {
-            type: "input",
-            name: "empName",
-            message: "Enter employee name here: "
-        },
-        {
-            type: "input",
-            name: "empId",
-            message:"Enter employee ID number here: "
-        },
-        {
-            type: "input",
-            name: "empEmail",
-            message: "enter employee email here: "
-        },
-
 
     ])
+    .then((answers) => {
+        switch (answers.role){
+            case "Manager" :
+                managerPrompt();
+                break;
+            case "Engineer" :
+                engineerPrompt();
+                break;
+            case "Intern" :
+                internPrompt();
+                break;
+            case "Done" :
+                fs.writeFile(outputPath, render(team), "utf-8", (err) => {
+                    if (err) throw err;
+                })
+        }
+    })
 };
 
-promptUser().then(function (answers) {
-    const html = generateMarkdown(answers);
-    return writeFileAsync("readMe.html", html);
-  });
+promptUser();
+
+// promptUser().then(function (answers) {
+//     const html = generateMarkdown(answers);
+//     return writeFileAsync("readMe.html", html);
+//   });
 
 
 // Write code to use inquirer to gather information about the development team members,
