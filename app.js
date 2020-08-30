@@ -4,12 +4,13 @@ const Intern = require("./lib/Intern");
 const inquirer = require("inquirer");
 const path = require("path");
 const fs = require("fs");
+const util = require("util");
 
 const OUTPUT_DIR = path.resolve(__dirname, "output");
 const outputPath = path.join(OUTPUT_DIR, "team.html");
 
 const render = require("./lib/htmlRenderer");
-//const writeFileAsync = util.promisify(fs.writeFile);
+const writeFileAsync = util.promisify(fs.writeFile);
 
 function promptUser(){
     return inquirer.prompt([
@@ -41,7 +42,7 @@ function promptUser(){
 
 promptUser().then(function (answers) {
     const html = generateMarkdown(answers);
-    return writeFileAsync("readMe.md", markdown);
+    return writeFileAsync("readMe.html", html);
   });
 
 
