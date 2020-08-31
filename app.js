@@ -86,7 +86,7 @@ function engineerPrompt(){
                     if (emailVal){
                         return true;
                     }
-                    return "Please get your sh*t togther";
+                    return "Please enter valid email!";
                 }
             },
 
@@ -134,7 +134,7 @@ function internPrompt(){
                     if (emailVal){
                         return true;
                     }
-                    return "Please get your sh*t togther";
+                    return "Please enter valid email!";
                 }
             },
 
@@ -187,10 +187,7 @@ function promptUser(){
 
 promptUser();
 
-// promptUser().then(function (answers) {
-//     const html = generateMarkdown(answers);
-//     return writeFileAsync("readMe.html", html);
-//   });
+
 
 
 // Write code to use inquirer to gather information about the development team members,
